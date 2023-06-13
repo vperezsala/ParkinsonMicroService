@@ -1,0 +1,393 @@
+package drools;
+import entities.*;
+
+/*
+rule "Parkinson Motor stage 0"
+     salience 2500
+     dialect "mvel"
+     when
+       p : Patient()
+     then
+       insertLogical( new DiseaseStage(patient = p.id, stage = Stage.STAGE_0));
+
+end
+*/
+
+rule "Parkinson Motor stage 1"
+     salience 2000
+     dialect "mvel"
+     when
+       d : DiseaseStage(stage == Stage.STAGE_0)
+       s1 : Symptom(patient == d.patient, type == SymptomType.MOTOR_SYMPTOM, symptom == Symptoms.CHANGES_POSTURE_WALKING_OR_FACIAL_EXPRESSION || symptom == Symptoms.SPEECH_PROBLEM )
+     then
+       d.setStage(Stage.STAGE_1);
+       update(d)
+
+end
+
+
+rule "Parkinson Motor stage 2"
+
+// BILATERAL INVOLVEMENT WITHOUT IMPAIRMENT OF BALANCE OR SOME IMPAIRMENT WITH RECOVERY
+     salience 2100
+     dialect "mvel"
+     when
+       d : DiseaseStage( stage == Stage.STAGE_0 )
+       s : Symptom(patient == d.patient, type == SymptomType.MOTOR_SYMPTOM, symptom == Symptoms.TREMOR || symptom == Symptoms.HOBBIES_AND_DAILY_TASKS_PROBLEMS)
+     then
+       d.setStage(Stage.STAGE_2);
+       update(d)
+
+end
+
+rule "Parkinson Motor stage 3"
+     salience 2200
+     dialect "mvel"
+     when
+       d : DiseaseStage( stage == Stage.STAGE_0 )
+       s1 : Symptom(patient == d.patient, symptom == Symptoms.BRADYKINESIA || symptom == Symptoms.POSTURAL_INSTABILITY)
+       //s2 : Symptom(patient == p.id, type == SymptomType.MOTOR_COMPLICATION, symptom == Symptoms.POSTURAL_INSTABILITY)
+     then
+       d.setStage(Stage.STAGE_3);
+       update(d)
+
+
+end
+
+rule "Parkinson Motor stage 4"
+     salience 2300
+     dialect "mvel"
+     when
+       d : DiseaseStage( stage == Stage.STAGE_0 )
+       s : Symptom(patient == d.patient, type == SymptomType.MOTOR_COMPLICATION, symptom == Symptoms.LIVING_DEPENDENCY || symptom ==Symptoms.RIGIDITY_CAUSING_MOVEMENT_LOSS)
+     then
+       d.setStage(Stage.STAGE_4);
+       update(d)
+
+end
+
+rule "Parkinson Motor stage 5"
+     salience 2400
+     dialect "mvel"
+     when
+       d : DiseaseStage( stage == Stage.STAGE_0 )
+       s : Symptom(patient == d.patient, type == SymptomType.MOTOR_COMPLICATION, symptom == Symptoms.WALKING_INABILITY)
+     then
+       d.setStage(Stage.STAGE_5);
+       update(d)
+
+
+end
+
+query "getObject"
+    $result: DiseaseStage()
+end
+
+//PATIENT DIAGNOSED YOUNG : 40-60, MILD: 61-80, OLD: 80
+
+// DRUG IS NOT COMPATIBLE
+
+rule "compatible with MAO B Inhibitors"
+     salience 1000
+     dialect "mvel"
+     when
+       d1 : Disease( patient == d1.patient, previous_disease == Previous_disease.PULMONARY_DISEASE )
+       d2 : Disease(patient == d1.patient, previous_disease == Previous_disease.DIABETES )
+       compatibility : Compatible(patient == d1.patient )
+     then
+       compatibility.setMao_b_Compatible(false);
+       update(compatibility)
+end
+
+rule " age compatible with MAO B Inhibitors"
+     salience 1000
+     dialect "mvel"
+     when
+       p : Patient(age > 85)
+       compatibility : Compatible(patient == p.id )
+     then
+       compatibility.setMao_b_Compatible(false);
+       update(compatibility)
+end
+
+rule "compatible with Levodopa"
+     salience 1000
+     dialect "mvel"
+     when
+       d1 : Disease( previous_disease == Previous_disease.HISTORY_OF_GLAUCOMA)
+       d2 : Disease(patient == d1.patient, previous_disease == Previous_disease.CONGESTIVE_HEART_FAILURE)
+       d3 : Disease(patient == d1.patient, previous_disease == Previous_disease.HIGH_BLOOD_PRESSURE )
+       compatibility : Compatible(patient == d1.patient)
+     then
+       compatibility.setLevodopaCompatible(false);
+       update(compatibility)
+end
+
+rule "compatible with Dopamine Agonists"
+     salience 1000
+     dialect "mvel"
+     when
+       d1 : Disease( previous_disease == Previous_disease.DIABETES)
+       s1 : Symptom(patient == d1.patient, type == SymptomType.NON_MOTOR_SYMPTOM, symptom == Symptoms.COGNITIVE_IMPAIRMENT )
+       s2 : Symptom(patient == d1.patient, type == SymptomType.MOTOR_COMPLICATION, symptom == Symptoms.IMPULSE_CONTROL_DISORDERS)
+       d2 : Disease(patient == d1.patient, previous_disease == Previous_disease.HISTORY_OF_SUBSTANCE_ABUSE)
+       compatibility : Compatible(patient == d1.patient)
+     then
+       compatibility.setDopamineAgonistCompatible(false);
+       update(compatibility)
+
+end
+rule " age compatible with Dopamine Agonists"
+     salience 1000
+     dialect "mvel"
+     when
+       p: Patient(age > 80)
+       compatibility : Compatible(patient == p.id)
+     then
+       compatibility.setDopamineAgonistCompatible(false);
+       update(compatibility)
+
+end
+
+rule "age compatible with DBS 1"
+     salience 1000
+     dialect "mvel"
+     when
+       p : Patient( age > 85)
+       c : Compatible(patient == p.id)
+     then
+       c.setDbs_Compatible(false);
+       update(c)
+
+end
+
+rule "compatible with DBS 2"
+     salience 1000
+     dialect "mvel"
+     when
+       c : Compatible(dbs_Compatible == true)
+       s2 : Symptom(patient == c.patient, type == SymptomType.NON_MOTOR_SYMPTOM, symptom == Symptoms.COGNITIVE_IMPAIRMENT || symptom == Symptoms.CONFUSION || symptom == Symptoms.DEPRESSIVE|| symptom == Symptoms.HALLUCINATIONS)
+     then
+       c.setDbs_Compatible(false)
+       update(c)
+
+end
+
+// FIRST LINE TREATMENTs
+//LEVODOPA
+//contraindicated as first line if: GLAUCOMA, DIABETES, CONGESTIVE HEART FAILURE
+//IT IS RECOMMENDED TO TRY TO DELAY ITS USE AS MUCH AS POSSIBLE
+//SIDE EFFECTS: abdominal pain, high blood pressure...
+
+
+rule "Levodopa as first line treatment"
+     dialect "mvel"
+     when
+       d : DiseaseStage( stage == Stage.STAGE_4 || stage == Stage.STAGE_5)
+       t : Prescription(patient == d.patient, treatment == Treatment.NO_TREATMENT)
+       c1 : Compatible(patient == d.patient, levodopaCompatible == true)
+
+     then
+       t.setTreatment(Treatment.LEVODOPA);
+       t.setCurrent(true);
+       update(t)
+end
+
+//MAO-B INHIBITORS
+
+/*
+YOUNG PATIENTS
+CONTRAINDICATIONS: diabetes, pulmonary disease
+POSSIBLE EFFECTS: slow progression
+SIDE EFFECTS: Depression symptoms
+used at early stages, less strong than dopamine and levodopa --> better tolerated
+*/
+
+rule "MAO-B Inhibitors as first line treatment"
+     dialect "mvel"
+     when
+       t : Prescription( treatment == Treatment.NO_TREATMENT)
+       c : Compatible(patient == t.patient, mao_b_Compatible == true)
+       d : DiseaseStage(patient == t.patient, stage == Stage.STAGE_1 ||stage == Stage.STAGE_2)
+     then
+       //p.setNew_treatment(Treatment.MAO_B_INHIBITORS)
+       t.setTreatment(Treatment.MAO_B_INHIBITORS);
+       t.setCurrent(true);
+       update(t)
+end
+
+
+//DOPAMINE AGONISTS
+//CONTRAINDICATIONS: older people, cognitive impairment(less likely as first line)
+
+rule "Dopamine Agonists as first line treatment"
+     dialect "mvel"
+     when
+       t : Prescription( treatment == Treatment.NO_TREATMENT)
+       c : Compatible(patient == t.patient, dopamineAgonistCompatible == true)
+       d : DiseaseStage(patient == t.patient, stage == Stage.STAGE_1 || stage == Stage.STAGE_2 || stage == Stage.STAGE_3 )
+     then
+       t.setTreatment(Treatment.DOPAMINE_AGONISTS);
+       t.setCurrent(true);
+       update(t)
+end
+
+//DEFINE SIDE EFFECTS FOR EACH MEDICATION TO SAY setSideEffects== TRUE
+
+//SIDE EFFECTS FROM MAO-B INHIBITORS
+
+rule "side effects of MAO-B inhibitors"
+     salience 500
+     dialect "mvel"
+     when
+       t : Prescription(current == false, treatment == Treatment.MAO_B_INHIBITORS)
+       s : Symptom(patient == t.patient, type == SymptomType.NON_MOTOR_SYMPTOM, symptom == Symptoms.HALLUCINATIONS || symptom == Symptoms.GASTROINTESTINAL_UPSET || symptom == Symptoms.INSOMNIA)
+       p : Patient(id == t.patient)
+     then
+       p.setSideEffects(true)
+       update(p)
+end
+
+//SIDE EFFECTS FROM DOPAMINE AGONISTS
+
+rule "side effects of Dopamine Agonists"
+     salience 500
+     dialect "mvel"
+     when
+        t : Prescription(current == false, treatment == Treatment.DOPAMINE_AGONISTS)
+        s : Symptom(patient == t.patient, symptom == Symptoms.DOPAMINE_DYSREGULATION_SYMPTOM || symptom == Symptoms.URINARY_PROBLEM ||symptom == Symptoms.IMPULSE_CONTROL_DISORDERS)
+        p : Patient(id == t.patient)
+     then
+       p.setSideEffects(true)
+       update(p)
+end
+
+
+// LEVODOPA
+
+rule "side effects of Levodopa"
+     salience 500
+     dialect "mvel"
+     when
+       t : Prescription( current == false , treatment == Treatment.LEVODOPA)
+       s : Symptom(patient == t.patient, type == SymptomType.MOTOR_COMPLICATION, symptom == Symptoms.FUNCTIONAL_IMPACT_OFF_STATE || symptom == Symptoms.DYSKINESIA )
+       p : Patient(id == t.patient)
+     then
+       p.setSideEffects(true)
+       update(p)
+end
+
+//SWITCHING FROM ONE MEDICATION TO ANOTHER
+
+//FROM MAO-B TO DOPAMINE:
+
+rule "from MAO-B to Dopamine Agonists"
+     salience 200
+     dialect "mvel"
+     when
+       p: Patient( sideEffects == true)
+       t: Prescription(patient == p.id, current == false, treatment == Treatment.MAO_B_INHIBITORS)
+       stage : DiseaseStage(patient == p.id, stage == Stage.STAGE_2 || stage == Stage.STAGE_3)
+       c : Compatible(patient == p.id, dopamineAgonistCompatible == true)
+     then
+       t.setCurrent(true)
+       t.setTreatment(Treatment.DOPAMINE_AGONISTS)
+       update(t)
+       System.out.println("Patient "+ p.id + "changes medication from MAO-B to Dopamine Agonists")
+
+end
+
+//FROM DOPAMINE TO MAO-B
+
+rule "from Dopamine Agonists to MAO-B inhibitors"
+     salience 200
+     dialect "mvel"
+     when
+       p : Patient(worsen == false,  sideEffects == true)
+       stage : DiseaseStage(patient == p.id, stage == Stage.STAGE_2 || stage == Stage.STAGE_3)
+       t : Prescription(patient == p.id, current == false, treatment == Treatment.DOPAMINE_AGONISTS)
+       c : Compatible(patient == p.id, mao_b_Compatible == true)
+     then
+       t.setCurrent(true)
+       t.setTreatment(Treatment.MAO_B_INHIBITORS)
+       update(t)
+       System.out.println("Patient "+ p.id + "changes medication from Dopamine Agonists to MAO-B")
+
+end
+
+//FROM MAO TO LEVODOPA
+//symptoms have worsen
+
+rule "from MAO-B inhibitors to Levodopa"
+     salience 200
+     dialect "mvel"
+     when
+       p : Patient(worsen == true)
+       t : Prescription(patient == p.id, current == false, treatment == Treatment.MAO_B_INHIBITORS)
+       //stage : DiseaseStage(patient == p.id, stage == Stage.STAGE_3 || stage == Stage.STAGE_4 || stage == Stage.STAGE_5)
+       c : Compatible(patient == p.id, levodopaCompatible == true)
+     then
+       t.setCurrent(true)
+       t.setTreatment(Treatment.LEVODOPA)
+       update(t)
+       System.out.println("Patient with id "+ p.id + "will need to change medication from MAO-B to Levodopa")
+end
+
+
+//FROM DOPAMINE TO LEVODOPA
+
+rule "from Dopamine Agonists to Levodopa"
+     salience 200
+     dialect "mvel"
+     when
+       p : Patient(worsen == true || sideEffects == true)
+       t : Prescription(patient == p.id, current == false, treatment == Treatment.DOPAMINE_AGONISTS)
+       c : Compatible(patient == p.id, levodopaCompatible == true)
+     then
+       t.setCurrent(true)
+       t.setTreatment(Treatment.LEVODOPA)
+       update(t)
+       System.out.println("Patient with id "+ p.id + "will need to change medication from Dopamine Agonists to Levodopa")
+end
+
+rule "no need to change medication"
+    dialect "mvel"
+    when
+      p : Patient( sideEffects == false)
+      t : Prescription(patient == p.id, current == false)
+    then
+      t.setCurrent(true)
+      System.out.println("Patient with id "+ p.id + "will keep his routine")
+end
+
+rule "combine medications"
+    dialect "mvel"
+    when
+      t : Prescription( current == false, treatment == Treatment.LEVODOPA)
+      p : Patient( id == t.patient, worsen == true || sideEffects == true)
+      c : Compatible(patient == t.patient, dbs_Compatible == false)
+    then
+      System.out.println( "Patient "+ t.patient +" has to combine drugs such as MAO-B inhibitors or Dopamine Agonists with Levodopa\n" )
+      t.setCurrent(true)
+      update(t)
+end
+
+
+//USE OF DEEP BRAIN STIMULATION
+
+rule "diagnose deep brain stimulation"
+     salience 200
+     dialect "mvel"
+     when
+       c : Compatible(dbs_Compatible == true)
+       p : Patient(id == c.patient, sideEffects == true)
+       t : Prescription(patient == p.id, current == false, treatment == Treatment.LEVODOPA)
+       d : DiseaseStage(patient == p.id, stage == Stage.STAGE_4 || stage == Stage.STAGE_3 )
+       s1 : Symptom(patient == p.id, type == SymptomType.MOTOR_COMPLICATION, symptom == Symptoms.FUNCTIONAL_IMPACT_OFF_STATE || symptom == Symptoms.BRADYKINESIA )
+     then
+       t.setCurrent(true)
+       t.setTreatment(Treatment.DEEP_BRAIN_STIMULATION)
+       System.out.println("Patient with id "+ p.id + "will need to do DEEP BRAIN STIMULATION");
+       update(t)
+
+end

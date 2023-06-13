@@ -1,0 +1,68 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# An example controller showing a sample home page
+GET     /                           controllers.HomeController.index()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+# APIs in PatientController
+GET     /patient              controllers.PatientController.listPatients()
+
+###
+#  summary: Returns the patient :id
+#  responses:
+#    200:
+#      description: success
+#      content:application/json:
+#      schema:
+#        $ref: '#/definitions/entities.Patient'
+###
+GET     /patient/:id          controllers.PatientController.retrieve(id:Int)
+POST    /patient              controllers.PatientController.create(request:Request)
+PUT     /patient              controllers.PatientController.update(request:Request)
+DELETE  /patient/:id          controllers.PatientController.delete(id:Int)
+
+###
+#  summary: Returns the prescription :patient
+#  responses:
+#    200:
+#      description: success
+#      content:application/json:
+#      schema:
+#        $ref: '#/definitions/entities.Prescription'
+###
+GET     /prescription/:patient         controllers.PrescriptionController.retrieve(patient:Int)
+POST    /prescription              controllers.PrescriptionController.create(request:Request)
+PUT     /prescription              controllers.PrescriptionController.update(request:Request)
+DELETE  /prescription/:patient          controllers.PrescriptionController.delete(patient:Int)
+
+###
+#  summary: Returns the patient :id with its diagnose filled
+#  responses:
+#    200:
+#      description: success
+#      content:application/json:
+#      schema:
+#        $ref: '#/definitions/entities.Patient'
+###
+GET     /patient/:id/diagnose          controllers.DroolsController.retrieveDiagnose(id:Int)
+
+###
+#  summary: Returns the prescription :patient with its diagnose filled
+#  responses:
+#    200:
+#      description: success
+#      content:application/json:
+#      schema:
+#        $ref: '#/definitions/entities.Prescription'
+###
+GET     /prescription/:id/diagnose          controllers.DroolsController.retrieveDiagnose(id:Int)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+
+
