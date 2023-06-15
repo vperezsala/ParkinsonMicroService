@@ -10,7 +10,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 
 ### NoDocs ###
-GET   /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file:String)
+GET   /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file: String)
 
 # APIs in PatientController
 GET     /patient              controllers.PatientController.listPatients()
@@ -26,22 +26,9 @@ GET     /patient              controllers.PatientController.listPatients()
 ###
 GET     /patient/:id          controllers.PatientController.retrieve(id:Int)
 POST    /patient              controllers.PatientController.create(request:Request)
-PUT     /patient              controllers.PatientController.update(request:Request)
+PUT     /patient/:id              controllers.PatientController.update(request:Request, id:Int)
 DELETE  /patient/:id          controllers.PatientController.delete(id:Int)
 
-###
-#  summary: Returns the prescription :patient
-#  responses:
-#    200:
-#      description: success
-#      content:application/json:
-#      schema:
-#        $ref: '#/definitions/entities.Prescription'
-###
-GET     /prescription/:patient         controllers.PrescriptionController.retrieve(patient:Int)
-POST    /prescription              controllers.PrescriptionController.create(request:Request)
-PUT     /prescription              controllers.PrescriptionController.update(request:Request)
-DELETE  /prescription/:patient          controllers.PrescriptionController.delete(patient:Int)
 
 ###
 #  summary: Returns the patient :id with its diagnose filled
@@ -54,16 +41,7 @@ DELETE  /prescription/:patient          controllers.PrescriptionController.delet
 ###
 GET     /patient/:id/diagnose          controllers.DroolsController.retrieveDiagnose(id:Int)
 
-###
-#  summary: Returns the prescription :patient with its diagnose filled
-#  responses:
-#    200:
-#      description: success
-#      content:application/json:
-#      schema:
-#        $ref: '#/definitions/entities.Prescription'
-###
-GET     /prescription/:id/diagnose          controllers.DroolsController.retrieveDiagnose(id:Int)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

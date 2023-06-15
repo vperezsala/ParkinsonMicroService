@@ -2,7 +2,6 @@ package entities;
 
 public class Symptom {
     private int patient;
-    private int symptomID;
     private SymptomType type;
     private Symptoms symptom;
 
@@ -24,14 +23,6 @@ public class Symptom {
 
     public void setPatient(int patient) {
         this.patient = patient;
-    }
-
-    public int getSymptomID() {
-        return symptomID;
-    }
-
-    public void setSymptomID(int symptomID) {
-        this.symptomID = symptomID;
     }
 
     public SymptomType getType() {

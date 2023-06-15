@@ -2,7 +2,6 @@ package entities;
 
 public class Disease {
     int patient;
-    int diseaseID;
     Previous_disease previous_disease;
 
     public Disease() {
@@ -24,14 +23,6 @@ public class Disease {
         this.patient = patient;
     }
 
-    public int getDiseaseID() {
-        return diseaseID;
-    }
-
-    public void setDiseaseID(int diseaseID) {
-        this.diseaseID = diseaseID;
-    }
-
     public Previous_disease getPrevious_disease() {
         return previous_disease;
     }
@@ -44,7 +35,6 @@ public class Disease {
     public String toString() {
         return "Disease{" +
                 "patient=" + patient +
-                "disease ID=" + diseaseID +
                 ", previous_disease=" + previous_disease +
                 '}';
     }

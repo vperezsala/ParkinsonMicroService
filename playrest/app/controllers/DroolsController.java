@@ -28,15 +28,8 @@ public class DroolsController extends Controller {
         }
 
         Patient patient = PatientService.getInstance().getPatient(id);
-        Set<Disease> disease = new HashSet<>();
-        disease.addAll(DiseaseService.getInstance().getDiseases(id));
-        System.out.println(disease);
-        Set<Symptom> symptom = new HashSet<>();
-        symptom.addAll(SymptomService.getInstance().getSymptoms(id));
-        int i = symptom.size();
-        System.out.println(i);
-        Prescription prescription = PrescriptionService.getInstance().getPrescription(id);
-        Compatible compatible = CompatibleService.getInstance().getCompatible(id);
+
+        Compatible compatible = new Compatible(id);
         DiseaseStage diseaseStage = new DiseaseStage(id,Stage.STAGE_0);
 
 
@@ -49,33 +42,38 @@ public class DroolsController extends Controller {
             KieSession kieSession1 = kContainer1.newKieSession("patients_session");
 
             kieSession1.insert(patient);
+
+            for(SymptomPatientClass sp : patient.getSymptoms()) {
+                kieSession1.insert(new Symptom(id, sp.getType(), sp.getSymptomName()));
+            }
+            if(patient.getPrevious_diseases() == null){
+                kieSession1.insert(new Disease(id));
+            } else{
+                for(Previous_disease pd : patient.getPrevious_diseases()) {
+                    kieSession1.insert(new Disease(id, pd));
+                }
+            }
+
+            Prescription p = new Prescription(id, patient.getCurrent_treatment());
+            kieSession1.insert(p);
             kieSession1.insert(diseaseStage);
-            kieSession1.insert(prescription);
-
             kieSession1.insert(compatible);
-            System.out.println(compatible);
-
-            for(Disease d:disease){
-                kieSession1.insert(d);
-                System.out.println(d);
-            }
-            for(Symptom s:symptom){
-                kieSession1.insert(s);
-                System.out.println(s);
-            }
 
             kieSession1.fireAllRules();
-            System.out.println("\n");
-            System.out.println(prescription);
-            //prescription = PrescriptionService.getInstance().updatePrescription(prescription);
 
+            patient.setCurrent_treatment(p.getTreatment());
+            PatientService.getInstance().updatePatient(patient, id);
+
+
+
+            //System.out.println(prescription);
 
         } catch (Throwable t) {
             System.out.println("Exception ---> DROOLS");
             t.printStackTrace();
         }
 
-        return ok(ApplicationUtil.createResponse(Json.toJson(prescription), true));
+        return ok(ApplicationUtil.createResponse(Json.toJson(patient), true));
 
     }
 

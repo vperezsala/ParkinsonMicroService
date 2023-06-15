@@ -28,7 +28,7 @@ public class PatientController extends Controller {
         JsonNode jsonObject = Json.toJson(patient);
         return created(ApplicationUtil.createResponse(jsonObject, true));
     }
-
+  /*
     public Result update(Http.Request request) {
         logger.debug("In PatientController.update()");
         JsonNode json = request.body().asJson();
@@ -44,6 +44,27 @@ public class PatientController extends Controller {
         JsonNode jsonObject = Json.toJson(patient);
         return ok(ApplicationUtil.createResponse(jsonObject, true));
     }
+ */
+
+
+    public Result update(Http.Request request, int id) {
+        logger.debug("In PatientController.update(), update patient with id: {}", id);
+        JsonNode json = request.body().asJson();
+        if (json == null) {
+            return badRequest(ApplicationUtil.createResponse("Expecting Json data", false));
+        }
+        if (PatientService.getInstance().getPatient(id) == null) {
+            return notFound(ApplicationUtil.createResponse("Patient with id:" + id + " not found", false));
+        }
+        Patient patient = PatientService.getInstance().updatePatient(Json.fromJson(json, Patient.class), id);
+        logger.debug("In PatientController.update(), patient is: {}", patient);
+        if (patient == null) {
+            return notFound(ApplicationUtil.createResponse("Patient not found", false));
+        }
+        JsonNode jsonObject = Json.toJson(patient);
+        return ok(ApplicationUtil.createResponse(jsonObject, true));
+    }
+
 
     public Result retrieve(int id) {
         logger.debug("In PatientController.retrieve(), retrieve patient with id: {}", id);

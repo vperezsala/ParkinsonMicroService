@@ -6,10 +6,11 @@ public class Patient {
     private int id;
     private String name;
     private int age;
+    private List<SymptomPatientClass> symptoms;
+    private List<Previous_disease> previous_diseases;
+    private Treatment current_treatment;
     private boolean sideEffects;
     private boolean worsen;
-
-    //private boolean alreadyTreated;
 
     public Patient() {
     }
@@ -24,6 +25,30 @@ public class Patient {
         this.name = name;
         this.age = age;
         this.worsen = worsen;
+    }
+
+    public List<SymptomPatientClass> getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(List<SymptomPatientClass> symptoms) {
+        this.symptoms = symptoms;
+    }
+
+    public List<Previous_disease> getPrevious_diseases() {
+        return previous_diseases;
+    }
+
+    public void setPrevious_diseases(List<Previous_disease> previous_diseases) {
+        this.previous_diseases = previous_diseases;
+    }
+
+    public Treatment getCurrent_treatment() {
+        return current_treatment;
+    }
+
+    public void setCurrent_treatment(Treatment current_treatment) {
+        this.current_treatment = current_treatment;
     }
 
     public int getId() {
@@ -72,6 +97,9 @@ public class Patient {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
+                ", symptoms=" + symptoms +
+                ", previous_diseases=" + previous_diseases +
+                ", current_treatment=" + current_treatment +
                 ", sideEffects=" + sideEffects +
                 ", worsen=" + worsen +
                 '}';
