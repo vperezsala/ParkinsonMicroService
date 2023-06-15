@@ -1,0 +1,9 @@
+---
+  swagger: "2.0"
+  info: 
+    title: "ParkinsonMicroService API"
+    description: "Manage your patients"
+  consumes:
+    - application/json
+  produces: 
+    - application/json
