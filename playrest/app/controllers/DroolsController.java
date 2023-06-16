@@ -63,6 +63,7 @@ public class DroolsController extends Controller {
 
             patient.setCurrent_treatment(p.getTreatment());
             PatientService.getInstance().updatePatient(patient, id);
+            kieSession1.dispose();
 
 
 
