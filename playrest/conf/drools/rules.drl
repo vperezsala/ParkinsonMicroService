@@ -114,7 +114,7 @@ rule "compatible with Levodopa"
      salience 1000
      dialect "mvel"
      when
-       d1 : Disease( previous_disease == Previous_disease.HISTORY_OF_GLAUCOMA)
+       d1 : Disease( previous_disease == Previous_disease.HISTORY_OF_GLAUCOMA )
        d2 : Disease(patient == d1.patient, previous_disease == Previous_disease.CONGESTIVE_HEART_FAILURE)
        d3 : Disease(patient == d1.patient, previous_disease == Previous_disease.HIGH_BLOOD_PRESSURE )
        compatibility : Compatible(patient == d1.patient)
@@ -193,6 +193,19 @@ rule "Levodopa as first line treatment"
        update(t)
 end
 
+rule "Levodopa as first line treatment if Dopamine Agonist is not compatible because of the age"
+     dialect "mvel"
+     when
+       d : DiseaseStage( stage == Stage.STAGE_3 )
+       t : Prescription(patient == d.patient, treatment == Treatment.NO_TREATMENT)
+       c1 : Compatible(patient == d.patient, levodopaCompatible == true && dopamineAgonistCompatible == false)
+
+     then
+       t.setTreatment(Treatment.LEVODOPA);
+       t.setCurrent(true);
+       update(t)
+end
+
 //MAO-B INHIBITORS
 
 /*
@@ -208,7 +221,7 @@ rule "MAO-B Inhibitors as first line treatment"
      when
        t : Prescription( treatment == Treatment.NO_TREATMENT)
        c : Compatible(patient == t.patient, mao_b_Compatible == true)
-       d : DiseaseStage(patient == t.patient, stage == Stage.STAGE_1 ||stage == Stage.STAGE_2)
+       d : DiseaseStage(patient == t.patient, stage == Stage.STAGE_1 ||stage == Stage.STAGE_2 )
      then
        //p.setNew_treatment(Treatment.MAO_B_INHIBITORS)
        t.setTreatment(Treatment.MAO_B_INHIBITORS);

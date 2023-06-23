@@ -17,9 +17,9 @@ public class PatientService {
 
     public static PatientService getInstance() {
 
-        List<Previous_disease> previousDiseaseList = new ArrayList<>();
 
-        Patient p1 = new Patient(1, "jorge", 70);
+
+        Patient p1 = new Patient(1, "Jorge Sánchez", 70);
         Treatment t1 = Treatment.NO_TREATMENT;
         p1.setCurrent_treatment(t1);
         List<SymptomPatientClass> s = new ArrayList<>();
@@ -30,19 +30,27 @@ public class PatientService {
         p1.setSymptoms(s);
 
 
-        Patient p2 = new Patient(2, "javier", 65);
+        Patient p2 = new Patient(2, "Javier Esteban", 81);
         Treatment t2 = Treatment.NO_TREATMENT;
         p2.setCurrent_treatment(t2);
         List<SymptomPatientClass> s2 = new ArrayList<>();
         SymptomPatientClass p2s1 = new SymptomPatientClass( SymptomType.MOTOR_SYMPTOM, Symptoms.BRADYKINESIA);
-        SymptomPatientClass p2s2 = new SymptomPatientClass(SymptomType.MOTOR_COMPLICATION, Symptoms.POSTURAL_INSTABILITY);
+        SymptomPatientClass p2s2 = new SymptomPatientClass(SymptomType.MOTOR_SYMPTOM, Symptoms.HOBBIES_AND_DAILY_TASKS_PROBLEMS);
+        SymptomPatientClass p2s3 = new SymptomPatientClass( SymptomType.MOTOR_SYMPTOM, Symptoms.TREMOR);
+        SymptomPatientClass p2s4 = new SymptomPatientClass(SymptomType.MOTOR_COMPLICATION, Symptoms.POSTURAL_INSTABILITY);
         s2.add(p2s1);
         s2.add(p2s2);
+        s2.add(p2s3);
+        s2.add(p2s4);
         p2.setSymptoms(s2);
+        List<Previous_disease> previousDiseaseList1 = new ArrayList<>();
+        Previous_disease p2d1 = Previous_disease.HISTORY_OF_GLAUCOMA;
+        previousDiseaseList1.add(p2d1);
+        p2.setPrevious_diseases(previousDiseaseList1);
 
 
 
-        Patient p3 = new Patient(3, "isa", 70, true);
+        Patient p3 = new Patient(3, "Isabelle Ollivier", 70, true);
         Treatment t3 = Treatment.MAO_B_INHIBITORS;
         p3.setCurrent_treatment(t3);
         List<SymptomPatientClass> s3 = new ArrayList<>();
@@ -56,7 +64,7 @@ public class PatientService {
 
 
 
-        Patient p4 = new Patient(4, "Maria", 74);
+        Patient p4 = new Patient(4, "Maria Alonso", 74);
         Treatment t4 = Treatment.LEVODOPA;
         p4.setCurrent_treatment(t4);
         List<SymptomPatientClass> s4 = new ArrayList<>();
@@ -68,15 +76,13 @@ public class PatientService {
 
 
 
-        Patient p5 = new Patient(5, "Juana", 69, true);
+        Patient p5 = new Patient(5, "Juana Zabala", 69, true);
         Treatment t5 = Treatment.DOPAMINE_AGONISTS;
         p5.setCurrent_treatment(t5);
         List<SymptomPatientClass> s5 = new ArrayList<>();
         SymptomPatientClass p5s1 = new SymptomPatientClass( SymptomType.MOTOR_SYMPTOM, Symptoms.POSTURAL_INSTABILITY);
-        //SymptomPatientClass p5s2 = new SymptomPatientClass( SymptomType.NON_MOTOR_SYMPTOM, Symptoms.IMPULSE_CONTROL_DISORDERS);
         SymptomPatientClass p5s3 = new SymptomPatientClass( SymptomType.MOTOR_SYMPTOM, Symptoms.SPEECH_PROBLEM);
         SymptomPatientClass p5s4 = new SymptomPatientClass( SymptomType.NON_MOTOR_SYMPTOM, Symptoms.ANXIOUS);
-        //SymptomPatientClass p5s5 = new SymptomPatientClass( SymptomType.MOTOR_COMPLICATION, Symptoms.LIVING_DEPENDENCY);
         s5.add(p5s1);
         s5.add(p5s3);
         s5.add(p5s4);
@@ -84,12 +90,13 @@ public class PatientService {
 
 
 
-        Patient p6 = new Patient(6, "David", 55);
+        Patient p6 = new Patient(6, "David Rosarío", 55);
         Treatment t6 =  Treatment.DOPAMINE_AGONISTS;
         p6.setCurrent_treatment(t6);
+        List<Previous_disease> previousDiseaseList2 = new ArrayList<>();
         Previous_disease p6d1 = Previous_disease.DIABETES;
-        previousDiseaseList.add(p6d1);
-        p6.setPrevious_diseases(previousDiseaseList);
+        previousDiseaseList2.add(p6d1);
+        p6.setPrevious_diseases(previousDiseaseList2);
         List<SymptomPatientClass> s6 = new ArrayList<>();
         SymptomPatientClass p6s1 = new SymptomPatientClass(SymptomType.MOTOR_COMPLICATION, Symptoms.BRADYKINESIA);
         SymptomPatientClass p6s2 = new SymptomPatientClass( SymptomType.MOTOR_SYMPTOM, Symptoms.HOBBIES_AND_DAILY_TASKS_PROBLEMS);
@@ -98,13 +105,38 @@ public class PatientService {
         p6.setSymptoms(s6);
 
 
-        Patient p7 = new Patient(7, "Caye", 70, true);
+        Patient p7 = new Patient(7, "Cayetana Salas", 70, true);
         Treatment t7 = Treatment.LEVODOPA;
         p7.setCurrent_treatment(t7);
         List<SymptomPatientClass> s7 = new ArrayList<>();
         SymptomPatientClass p7s1 = new SymptomPatientClass( SymptomType.MOTOR_COMPLICATION, Symptoms.RIGIDITY_CAUSING_MOVEMENT_LOSS);
         s7.add(p7s1);
         p7.setSymptoms(s7);
+
+        Patient p8 = new Patient(8, "David Novo", 65);
+        Treatment t8 = Treatment.NO_TREATMENT;
+        p8.setCurrent_treatment(t8);
+        List<SymptomPatientClass> s8 = new ArrayList<>();
+        SymptomPatientClass p8s1 = new SymptomPatientClass( SymptomType.MOTOR_SYMPTOM, Symptoms.BRADYKINESIA);
+        SymptomPatientClass p8s2 = new SymptomPatientClass(SymptomType.MOTOR_SYMPTOM, Symptoms.HOBBIES_AND_DAILY_TASKS_PROBLEMS);
+        SymptomPatientClass p8s3 = new SymptomPatientClass( SymptomType.MOTOR_SYMPTOM, Symptoms.TREMOR);
+        SymptomPatientClass p8s4 = new SymptomPatientClass(SymptomType.MOTOR_COMPLICATION, Symptoms.POSTURAL_INSTABILITY);
+        s8.add(p8s1);
+        s8.add(p8s2);
+        s8.add(p8s3);
+        s8.add(p8s4);
+        p8.setSymptoms(s8);
+        List<Previous_disease> previousDiseaseList8 = new ArrayList<>();
+        Previous_disease p8d1 = Previous_disease.HISTORY_OF_GLAUCOMA;
+        previousDiseaseList8.add(p8d1);
+        p8.setPrevious_diseases(previousDiseaseList8);
+
+        Patient p9 = new Patient(9, "David Novo", 65);
+        Treatment t9 = Treatment.DOPAMINE_AGONISTS;
+        p9.setCurrent_treatment(t9);
+        p9.setWorsen(true);
+        p9.setSymptoms(s8);
+        p9.setPrevious_diseases(previousDiseaseList8);
 
 
         if (instance == null) {
@@ -117,6 +149,8 @@ public class PatientService {
             instance.patients.put(5,p5);
             instance.patients.put(6,p6);
             instance.patients.put(7,p7);
+            instance.patients.put(8,p8);
+            instance.patients.put(9,p9);
         }
         return instance;
     }
